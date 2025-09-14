@@ -1,5 +1,21 @@
+/*
+==========================================================================================
+Stored Procedure: Load Bronze Layer(Source -> Bronze)
+==========================================================================================
+Script Purpose:
+  This store procedure loads data into the 'bronze' schema from external CSV files.
+  It performs the following actions:
+  - Truncates the bronze tables before loading data.
+  - Uses the 'BULK INSERT' command to load data from CSV files to bronze tables.
 
--- Create stored procedures
+Parameters:
+    None.
+  This stored procedure des not accept any parameters or return any values.
+
+Usage Example:
+  EXEC bronze.load_bronze;
+==========================================================================================
+*/
 CREATE OR ALTER PROCEDURE silver.load_silver AS 
 BEGIN
 	DECLARE @start_time DATETIME, @end_time DATETIME, @batch_start_time DATETIME, @batch_end_time DATETIME;
@@ -8,7 +24,6 @@ BEGIN
         PRINT '==========================================================';
         PRINT 'Loading Silver Layer';
         PRINT '==========================================================';
-
 
         PRINT '----------------------------------------------------------';
         PRINT 'Loading CRM Tables';
@@ -31,18 +46,18 @@ BEGIN
 		select
 			cst_id,
 			cst_key,
-			TRIM(cst_firstname) AS cst_firstname, -- Remove unwanted spaces 
+			TRIM(cst_firstname) AS cst_firstname,
 			TRIM(cst_lastname) AS cst_lastname,
 			CASE
 				When UPPER(TRIM(cst_gndr))='M' then 'Male'
 				When UPPER(TRIM(cst_gndr))='F' then 'Female'
 				Else 'n/a'
-			END cst_gndr,  -- -- Normalize gender status values to readable format // Data normalisation & standardization
+			END cst_gndr,
 			CASE
 				WHEN UPPER(TRIM(cst_marital_status))='M' THEN 'Married'
 				WHEN UPPER(TRIM(cst_marital_status))='S' THEN 'Single'
 				ELSE 'n/a'
-			END cst_martial_status, -- Normalize martial status values to readable format // handling missing values
+			END cst_martial_status,
 			cst_create_date
 		FROM(
 		SELECT
@@ -73,28 +88,26 @@ BEGIN
 		)
 		SELECT
 			prd_id,
-			REPLACE(SUBSTRING(prd_key,1,5),'-','_') AS cat_id, -- Derived COLUMNS : create new columns based on 
-															   -- calculations or transformations of existing ones. 
+			REPLACE(SUBSTRING(prd_key,1,5),'-','_') AS cat_id,
 			SUBSTRING(prd_key,7,len(prd_key)) AS prd_key,
 			prd_nm,
-			ISNULL(prd_cost,0) AS prd_cost, -- HANDLING MISSING INFORMATION
-			CASE UPPER(TRIM(prd_line)) -- DATA NORMALISATION
+			ISNULL(prd_cost,0) AS prd_cost,
+			CASE UPPER(TRIM(prd_line))
 				WHEN 'M' THEN 'Mountain'
 				WHEN 'R' THEN 'Road'
 				WHEN 'S' THEN 'Other Sales'
 				WHEN 'T' THEN 'Touring'
-				ELSE 'n/a' -- HANDLED MISSING DATA 
-			END AS prd_line, -- Map product line codes to descriptive values. 
-			CAST(prd_start_dt AS DATE) AS prd_start_dt, -- DATA TRANSFORMATION: CAST FROM ONE DATATYE TO ANOTHER
+				ELSE 'n/a' 
+			END AS prd_line,
+			CAST(prd_start_dt AS DATE) AS prd_start_dt,
 			CAST(
 				lead(prd_start_dt) over (partition by prd_key order by prd_start_dt)-1 
 				AS DATE
-			) AS prd_end_dt -- DATA ENRICHMENT: ADD NEW, RELEVANT DATA TO ENCHANCE THE DATA SET FOR ANALYSIS.
+			) AS prd_end_dt
 		FROM bronze.crm_prd_info
 		SET @end_time=GETDATE();
         PRINT '>> Load Duration:' + CAST(DATEDIFF(SECOND,@start_time,@end_time) AS NVARCHAR) + ' seconds';
         Print '>> ----------------------';
-
 
 		-- Loading silver.crm_sales_details
         SET @start_time =GETDATE();
@@ -116,8 +129,8 @@ BEGIN
 			sls_ord_num,
 			sls_prd_key,
 			sls_cust_id,
-			CASE WHEN sls_order_dt=0 or len(sls_order_dt)!=8 THEN NULL -- handling invalid data
-				else cast(cast(sls_order_dt as varchar) as date) -- data type casting
+			CASE WHEN sls_order_dt=0 or len(sls_order_dt)!=8 THEN NULL
+				else cast(cast(sls_order_dt as varchar) as date)
 			end as sls_order_dt,
 			CASE WHEN sls_ship_dt=0 or len(sls_ship_dt)!=8 THEN NULL
 				else cast(cast(sls_ship_dt as varchar) as date) 
@@ -125,12 +138,12 @@ BEGIN
 			CASE WHEN sls_due_dt=0 or len(sls_due_dt)!=8 THEN NULL
 				else cast(cast(sls_due_dt as varchar) as date) 
 			end as sls_due_dt,
-			CASE WHEN sls_sales IS NULL OR sls_sales<=0 OR sls_sales!=sls_quantity* ABS(sls_price) -- handling missing and invalid data
+			CASE WHEN sls_sales IS NULL OR sls_sales<=0 OR sls_sales!=sls_quantity* ABS(sls_price)
 					THEN sls_quantity* ABS(sls_price) 
 				 ELSE sls_sales
 			END AS sls_sales,
 			sls_quantity,
-			CASE WHEN sls_price<=0 OR sls_price IS NULL  -- handling invalid data
+			CASE WHEN sls_price<=0 OR sls_price IS NULL
 					THEN sls_sales/ NULLIF(sls_quantity,0)
 				ELSE sls_price
 			END AS sls_price
@@ -150,16 +163,16 @@ BEGIN
 		PRINT '>> Inserting Data Into: silver.erp_cust_az12';
 		INSERT INTO silver.erp_cust_az12(cid,bdate,gen)
 		SELECT 
-		CASE WHEN cid like 'NAS%' THEN SUBSTRING(cid,4, len(cid)) -- Remove 'NAS' prefix if present
+		CASE WHEN cid like 'NAS%' THEN SUBSTRING(cid,4, len(cid))
 			ELSE cid
 		END AS cid,
-		CASE WHEN bdate> getdate() THEN NULL -- handling missing values
+		CASE WHEN bdate> getdate() THEN NULL
 			ELSE bdate 
 		END AS bdate, -- set future bdates to null
-		CASE WHEN UPPER(TRIM(gen)) IN ('F','Female') THEN 'Female' -- data normalisation
+		CASE WHEN UPPER(TRIM(gen)) IN ('F','Female') THEN 'Female'
 			 WHEN UPPER(TRIM(gen)) IN ('M','Male') THEN 'Male'
 			 ELSE 'n/a'
-		END AS gen -- normalise gender values and handle unknown values.
+		END AS gen
 		FROM bronze.erp_cust_az12
 		SET @end_time=GETDATE();
         PRINT '>> Load Duration:' + CAST(DATEDIFF(SECOND,@start_time,@end_time) AS NVARCHAR) + ' seconds';
@@ -177,12 +190,11 @@ BEGIN
 			 WHEN TRIM(cntry) IN ('US','USA') Then 'United States'
 			 WHEN TRIM(cntry) ='' or cntry IS NULL  Then 'n/a'
 			 ELSE TRIM(cntry)
-		END AS cntry -- Normalize and Handle Missing or blank country codes and remove  unwanted spaces 
+		END AS cntry
 		FROM bronze.erp_loc_a101
 		SET @end_time=GETDATE();
         PRINT '>> Load Duration:' + CAST(DATEDIFF(SECOND,@start_time,@end_time) AS NVARCHAR) + ' seconds';
         Print '>> ----------------------';
-	
 
 		-- Loading silver.erp_pa_cat_g1v2
         SET @start_time =GETDATE();
