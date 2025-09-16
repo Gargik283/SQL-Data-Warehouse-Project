@@ -37,25 +37,3 @@ Develop a modern data warehouse using SQL Server to consolidate sales data, enab
 
     This project is licensed under the [MIT Ltcense](LICENSE). You are free to use, modify, and share this project with proper attibution.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
