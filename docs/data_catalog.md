@@ -11,9 +11,9 @@ ________________________________________________________________________________
   •	Columns:
   
   |Column Name	  |     Data Type	   |                               Description
-  |:--------------|:-----------------|    :-------------------------------------------------------------------------
+  |:--------------|:-----------------|:-----------------------------------------------------------------------------
   |customer_key   |     INT          |  Surrogate key uniquely defining each customer record in the dimension table.
-  |customer_id    |     INT          |
+  |customer_id    |     INT          |  
   |customer_numbe |     NVARCHAR(50) |
   |first_name     |     NVARCHAR(50) |
   |last_name      |     NVARCHAR(50) |
