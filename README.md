@@ -96,7 +96,7 @@ SQL Analytics & Reporting
 The Gold layer follows a **Star Schema** consisting of Fact and Dimension tables to support high-performance analytical queries.
 
 <p align="center">
-<img src="docs/data_models.jpg" width="85%">
+<img src="docs/data_model.jpg" width="85%">
 </p>
 
 ---
