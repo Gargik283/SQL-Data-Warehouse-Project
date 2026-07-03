@@ -1,104 +1,244 @@
-# Data Warehouse and Analytics Project
+# 💎 SQL Data Warehouse & Analytics Project
 
-Welcome to the **Data Warehouse and Analytics Project** repository! 🚀  
-This project demonstrates a comprehensive data warehousing and analytics solution, from building a data warehouse to generating actionable insights. Designed as a portfolio project, it highlights industry best practices in data engineering and analytics.
-
----
-## 🏗️ Data Architecture
-
-The data architecture for this project follows Medallion Architecture **Bronze**, **Silver**, and **Gold** layers:
-![Data Architecture](docs/data_architecture.jpg)
-
-1. **Bronze Layer**: Stores raw data as-is from the source systems. Data is ingested from CSV Files into SQL Server Database.
-2. **Silver Layer**: This layer includes data cleansing, standardization, and normalization processes to prepare data for analysis.
-3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
-
----
-## 📖 Project Overview
-
-This project involves:
-
-1. **Data Architecture**: Designing a Modern Data Warehouse Using Medallion Architecture **Bronze**, **Silver**, and **Gold** layers.
-2. **ETL Pipelines**: Extracting, transforming, and loading data from source systems into the warehouse.
-3. **Data Modeling**: Developing fact and dimension tables optimized for analytical queries.
-4. **Analytics & Reporting**: Creating SQL-based reports and dashboards for actionable insights.
-
-🎯 This repository is an excellent resource for professionals and students looking to showcase expertise in:
-- SQL Development
-- Data Architect
-- Data Engineering  
-- ETL Pipeline Developer  
-- Data Modeling  
-- Data Analytics  
+<p align="center">
+  <img src="https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white">
+  <img src="https://img.shields.io/badge/Data%20Warehouse-Medallion%20Architecture-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/ETL-Pipeline-success?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Star%20Schema-Data%20Model-green?style=for-the-badge">
+</p>
 
 ---
 
+# 🌟 Executive Summary
 
-## 🚀 Project Requirements
+This project demonstrates the design and implementation of a modern **SQL Data Warehouse** using **Medallion Architecture (Bronze, Silver, and Gold Layers)**.
 
-### Building the Data Warehouse (Data Engineering)
-
-#### Objective
-Develop a modern data warehouse using SQL Server to consolidate sales data, enabling analytical reporting and informed decision-making.
-
-#### Specifications
-- **Data Sources**: Import data from two source systems (ERP and CRM) provided as CSV files.
-- **Data Quality**: Cleanse and resolve data quality issues prior to analysis.
-- **Integration**: Combine both sources into a single, user-friendly data model designed for analytical queries.
-- **Scope**: Focus on the latest dataset only; historization of data is not required.
-- **Documentation**: Provide clear documentation of the data model to support both business stakeholders and analytics teams.
+The project includes end-to-end **ETL pipelines**, **data cleansing**, **dimensional data modeling**, and **SQL-based analytics** to transform raw ERP and CRM data into business-ready datasets for reporting and decision-making.
 
 ---
 
-### BI: Analytics & Reporting (Data Analysis)
+# 🛠️ Tech Stack
 
-#### Objective
-Develop SQL-based analytics to deliver detailed insights into:
-- **Customer Behavior**
-- **Product Performance**
-- **Sales Trends**
+- Microsoft SQL Server
+- SQL
+- ETL Pipeline
+- Medallion Architecture
+- Star Schema
+- SQL Server Management Studio (SSMS)
+- CSV Data Sources
 
-These insights empower stakeholders with key business metrics, enabling strategic decision-making.  
+---
 
+# 🏗️ Data Architecture
 
+The project follows the **Medallion Architecture**, organizing data into Bronze, Silver, and Gold layers for scalable and maintainable data processing.
 
-## 📂 Repository Structure
+<p align="center">
+<img src="docs/data_architecture.jpg" width="90%">
+</p>
+
+### Architecture Workflow
+
+```text
+CSV Files
+     │
+     ▼
+Bronze Layer
+(Raw Data)
+     │
+     ▼
+Silver Layer
+(Data Cleaning & Transformation)
+     │
+     ▼
+Gold Layer
+(Business Ready Data)
+     │
+     ▼
+Star Schema
+     │
+     ▼
+SQL Analytics & Reporting
 ```
+
+---
+
+# 📂 Data Warehouse Layers
+
+## 🥉 Bronze Layer
+
+- Stores raw ERP and CRM datasets.
+- Data is loaded directly from CSV files.
+- No transformations are applied.
+
+---
+
+## 🥈 Silver Layer
+
+- Cleans and validates raw data.
+- Removes duplicates.
+- Handles missing values.
+- Standardizes formats.
+- Prepares datasets for modeling.
+
+---
+
+## 🥇 Gold Layer
+
+- Contains business-ready analytical datasets.
+- Implements a Star Schema.
+- Optimized for SQL reporting and analytics.
+
+---
+
+# ⭐ Star Schema Data Model
+
+The Gold layer follows a **Star Schema** consisting of Fact and Dimension tables to support high-performance analytical queries.
+
+<p align="center">
+<img src="docs/data_models.jpg" width="85%">
+</p>
+
+---
+
+# 🔄 ETL Workflow
+
+The ETL pipeline consists of the following stages:
+
+1. Extract ERP and CRM datasets.
+2. Load raw data into the Bronze layer.
+3. Clean and transform data in the Silver layer.
+4. Build analytical tables in the Gold layer.
+5. Execute SQL queries for business reporting.
+
+---
+
+# 📈 Business Analytics
+
+The data warehouse enables analysis of:
+
+- Customer Behavior
+- Product Performance
+- Sales Trends
+- Revenue Analysis
+- Business Performance Reporting
+
+---
+
+# 💻 Sample SQL Analytics
+
+### Top Customers by Sales
+
+```sql
+SELECT
+    Customer_Name,
+    SUM(Sales_Amount) AS TotalSales
+FROM gold.fact_sales
+GROUP BY Customer_Name
+ORDER BY TotalSales DESC;
+```
+
+---
+
+### Monthly Sales Trend
+
+```sql
+SELECT
+    Year,
+    Month,
+    SUM(Sales_Amount) AS TotalSales
+FROM gold.fact_sales
+GROUP BY Year, Month
+ORDER BY Year, Month;
+```
+
+---
+
+# 📈 Key Business Insights
+
+This warehouse supports business users in answering important analytical questions, including:
+
+- Which customers generate the highest revenue?
+- Which products contribute the most sales?
+- How do monthly sales trends change over time?
+- Which regions perform the best?
+- Which products have declining demand?
+- What are the key drivers of business performance?
+
+---
+
+# 🚀 Skills Demonstrated
+
+- SQL Development
+- Data Warehousing
+- ETL Pipeline Design
+- Data Cleansing
+- Data Transformation
+- Medallion Architecture
+- Star Schema Modeling
+- SQL Analytics
+- Data Modeling
+- Business Intelligence
+
+---
+
+# 📂 Repository Structure
+
+```text
 data-warehouse-project/
 │
-├── datasets/                           # Raw datasets used for the project (ERP and CRM data)
+├── datasets/
 │
-├── docs/                               # Project documentation and architecture details
-│   ├── etl.drawio                      # Draw.io file shows all different techniquies and methods of ETL
-│   ├── data_architecture.drawio        # Draw.io file shows the project's architecture
-│   ├── data_catalog.md                 # Catalog of datasets, including field descriptions and metadata
-│   ├── data_flow.drawio                # Draw.io file for the data flow diagram
-│   ├── data_models.drawio              # Draw.io file for data models (star schema)
-│   ├── naming-conventions.md           # Consistent naming guidelines for tables, columns, and files
+├── docs/
+│   ├── data_architecture.jpg
+│   ├── data_models.jpg
+│   ├── data_catalog.md
+│   ├── etl.drawio
+│   ├── data_flow.drawio
+│   ├── naming-conventions.md
 │
-├── scripts/                            # SQL scripts for ETL and transformations
-│   ├── bronze/                         # Scripts for extracting and loading raw data
-│   ├── silver/                         # Scripts for cleaning and transforming data
-│   ├── gold/                           # Scripts for creating analytical models
+├── scripts/
+│   ├── bronze/
+│   ├── silver/
+│   ├── gold/
 │
-├── tests/                              # Test scripts and quality files
+├── tests/
 │
-├── README.md                           # Project overview and instructions
-├── LICENSE                             # License information for the repository
-├── .gitignore                          # Files and directories to be ignored by Git
-└── requirements.txt                    # Dependencies and requirements for the project
+├── README.md
+├── LICENSE
+├── .gitignore
+└── requirements.txt
 ```
+
 ---
 
+# 🚀 Future Enhancements
 
-## 🛡️ License
+- Incremental Data Loading
+- Automated ETL Scheduling
+- SQL Performance Optimization
+- Power BI Dashboard Integration
+- Cloud Data Warehouse Deployment
+- Data Quality Monitoring
 
-This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and share this project with proper attribution.
+---
 
-## 🌟 About Me
+# 👩‍💻 About Me
 
-Hi there! I'm **Gargi Kundu**. I’m a recent graduate in ECE from MCKV Institute of Engineering.I'm passionate about data analytics and eagerly looking forward to build my career in this role.
+**Gargi Kundu**
 
-Let's stay in touch! Feel free to connect with me on the following platforms:
+Aspiring **Data Analyst** with hands-on experience in **SQL, Power BI, Python, PostgreSQL, and Data Warehousing**. Passionate about building scalable data solutions and transforming raw data into actionable business insights.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/gargi-kundu)
+📧 **Email:** gargikundu211@gmail.com
+
+💼 **LinkedIn:** https://www.linkedin.com/in/gargi-kundu
+
+🐙 **GitHub:** https://github.com/Gargik283
+
+---
+
+# ⭐ Support
+
+If you found this project helpful, consider giving it a ⭐ on GitHub.
+
+Thank you for visiting my repository!
